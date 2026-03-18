@@ -249,6 +249,301 @@ final class RuleEvaluatorTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
+    // WORD_COUNT_MIN
+    // -------------------------------------------------------------------------
+
+    public function testWordCountMinPasses(): void
+    {
+        $rule = $this->makeRule(ConditionType::WORD_COUNT_MIN, '5');
+        self::assertTrue($this->evaluator->evaluate($rule, 'one two three four five'));
+        self::assertTrue($this->evaluator->evaluate($rule, 'one two three four five six'));
+    }
+
+    public function testWordCountMinFails(): void
+    {
+        $rule = $this->makeRule(ConditionType::WORD_COUNT_MIN, '5');
+        self::assertFalse($this->evaluator->evaluate($rule, 'only three words'));
+    }
+
+    public function testWordCountMinStripsHtml(): void
+    {
+        $rule = $this->makeRule(ConditionType::WORD_COUNT_MIN, '3');
+        self::assertTrue($this->evaluator->evaluate($rule, '<p>one <strong>two</strong> three</p>'));
+    }
+
+    public function testWordCountMinFailsOnNull(): void
+    {
+        $rule = $this->makeRule(ConditionType::WORD_COUNT_MIN, '1');
+        self::assertFalse($this->evaluator->evaluate($rule, null));
+    }
+
+    // -------------------------------------------------------------------------
+    // WORD_COUNT_MAX
+    // -------------------------------------------------------------------------
+
+    public function testWordCountMaxPasses(): void
+    {
+        $rule = $this->makeRule(ConditionType::WORD_COUNT_MAX, '5');
+        self::assertTrue($this->evaluator->evaluate($rule, 'only two words'));
+        self::assertTrue($this->evaluator->evaluate($rule, 'exactly five words here ok'));
+    }
+
+    public function testWordCountMaxFails(): void
+    {
+        $rule = $this->makeRule(ConditionType::WORD_COUNT_MAX, '3');
+        self::assertFalse($this->evaluator->evaluate($rule, 'this has more than three words'));
+    }
+
+    // -------------------------------------------------------------------------
+    // IS_NUMERIC
+    // -------------------------------------------------------------------------
+
+    public function testIsNumericPassesOnInt(): void
+    {
+        $rule = $this->makeRule(ConditionType::IS_NUMERIC);
+        self::assertTrue($this->evaluator->evaluate($rule, 42));
+    }
+
+    public function testIsNumericPassesOnFloat(): void
+    {
+        $rule = $this->makeRule(ConditionType::IS_NUMERIC);
+        self::assertTrue($this->evaluator->evaluate($rule, 3.14));
+    }
+
+    public function testIsNumericPassesOnNumericString(): void
+    {
+        $rule = $this->makeRule(ConditionType::IS_NUMERIC);
+        self::assertTrue($this->evaluator->evaluate($rule, '123.45'));
+    }
+
+    public function testIsNumericFailsOnNonNumericString(): void
+    {
+        $rule = $this->makeRule(ConditionType::IS_NUMERIC);
+        self::assertFalse($this->evaluator->evaluate($rule, 'abc'));
+    }
+
+    public function testIsNumericFailsOnNull(): void
+    {
+        $rule = $this->makeRule(ConditionType::IS_NUMERIC);
+        self::assertFalse($this->evaluator->evaluate($rule, null));
+    }
+
+    // -------------------------------------------------------------------------
+    // IS_URL
+    // -------------------------------------------------------------------------
+
+    public function testIsUrlPasses(): void
+    {
+        $rule = $this->makeRule(ConditionType::IS_URL);
+        self::assertTrue($this->evaluator->evaluate($rule, 'https://example.com'));
+        self::assertTrue($this->evaluator->evaluate($rule, 'http://sub.example.org/path?q=1'));
+    }
+
+    public function testIsUrlFails(): void
+    {
+        $rule = $this->makeRule(ConditionType::IS_URL);
+        self::assertFalse($this->evaluator->evaluate($rule, 'not-a-url'));
+        self::assertFalse($this->evaluator->evaluate($rule, ''));
+        self::assertFalse($this->evaluator->evaluate($rule, null));
+    }
+
+    // -------------------------------------------------------------------------
+    // IS_EMAIL
+    // -------------------------------------------------------------------------
+
+    public function testIsEmailPasses(): void
+    {
+        $rule = $this->makeRule(ConditionType::IS_EMAIL);
+        self::assertTrue($this->evaluator->evaluate($rule, 'user@example.com'));
+        self::assertTrue($this->evaluator->evaluate($rule, 'User+Tag@sub.example.org'));
+    }
+
+    public function testIsEmailFails(): void
+    {
+        $rule = $this->makeRule(ConditionType::IS_EMAIL);
+        self::assertFalse($this->evaluator->evaluate($rule, 'not-an-email'));
+        self::assertFalse($this->evaluator->evaluate($rule, '@missing-local.com'));
+        self::assertFalse($this->evaluator->evaluate($rule, null));
+    }
+
+    // -------------------------------------------------------------------------
+    // IN_SET
+    // -------------------------------------------------------------------------
+
+    public function testInSetPasses(): void
+    {
+        $rule = $this->makeRule(ConditionType::IN_SET, 'en, de, fr');
+        self::assertTrue($this->evaluator->evaluate($rule, 'en'));
+        self::assertTrue($this->evaluator->evaluate($rule, 'fr'));
+    }
+
+    public function testInSetFails(): void
+    {
+        $rule = $this->makeRule(ConditionType::IN_SET, 'en,de,fr');
+        self::assertFalse($this->evaluator->evaluate($rule, 'es'));
+        self::assertFalse($this->evaluator->evaluate($rule, null));
+    }
+
+    // -------------------------------------------------------------------------
+    // NOT_IN_SET
+    // -------------------------------------------------------------------------
+
+    public function testNotInSetPasses(): void
+    {
+        $rule = $this->makeRule(ConditionType::NOT_IN_SET, 'draft, archived');
+        self::assertTrue($this->evaluator->evaluate($rule, 'published'));
+    }
+
+    public function testNotInSetFails(): void
+    {
+        $rule = $this->makeRule(ConditionType::NOT_IN_SET, 'draft,archived');
+        self::assertFalse($this->evaluator->evaluate($rule, 'draft'));
+    }
+
+    // -------------------------------------------------------------------------
+    // RELATION_COUNT_MAX
+    // -------------------------------------------------------------------------
+
+    public function testRelationCountMaxPasses(): void
+    {
+        $rule = $this->makeRule(ConditionType::RELATION_COUNT_MAX, '3');
+        self::assertTrue($this->evaluator->evaluate($rule, ['a', 'b']));
+        self::assertTrue($this->evaluator->evaluate($rule, []));
+    }
+
+    public function testRelationCountMaxFails(): void
+    {
+        $rule = $this->makeRule(ConditionType::RELATION_COUNT_MAX, '2');
+        self::assertFalse($this->evaluator->evaluate($rule, ['a', 'b', 'c']));
+    }
+
+    // -------------------------------------------------------------------------
+    // HAS_RELATION
+    // -------------------------------------------------------------------------
+
+    public function testHasRelationPassesOnNonEmptyArray(): void
+    {
+        $rule = $this->makeRule(ConditionType::HAS_RELATION);
+        self::assertTrue($this->evaluator->evaluate($rule, [new \stdClass()]));
+    }
+
+    public function testHasRelationFailsOnEmptyArray(): void
+    {
+        $rule = $this->makeRule(ConditionType::HAS_RELATION);
+        self::assertFalse($this->evaluator->evaluate($rule, []));
+    }
+
+    public function testHasRelationFailsOnNull(): void
+    {
+        $rule = $this->makeRule(ConditionType::HAS_RELATION);
+        self::assertFalse($this->evaluator->evaluate($rule, null));
+    }
+
+    // -------------------------------------------------------------------------
+    // IMAGE_HAS_ALT
+    // -------------------------------------------------------------------------
+
+    public function testImageHasAltPassesWithGetAlt(): void
+    {
+        $rule = $this->makeRule(ConditionType::IMAGE_HAS_ALT);
+
+        $image = new class () {
+            public function getAlt(): string
+            {
+                return 'A product photo';
+            }
+        };
+
+        self::assertTrue($this->evaluator->evaluate($rule, $image));
+    }
+
+    public function testImageHasAltFailsWithEmptyAlt(): void
+    {
+        $rule = $this->makeRule(ConditionType::IMAGE_HAS_ALT);
+
+        $image = new class () {
+            public function getAlt(): string
+            {
+                return '';
+            }
+        };
+
+        self::assertFalse($this->evaluator->evaluate($rule, $image));
+    }
+
+    public function testImageHasAltFailsOnNull(): void
+    {
+        $rule = $this->makeRule(ConditionType::IMAGE_HAS_ALT);
+        self::assertFalse($this->evaluator->evaluate($rule, null));
+    }
+
+    // -------------------------------------------------------------------------
+    // BOOLEAN_TRUE
+    // -------------------------------------------------------------------------
+
+    public function testBooleanTruePasses(): void
+    {
+        $rule = $this->makeRule(ConditionType::BOOLEAN_TRUE);
+        self::assertTrue($this->evaluator->evaluate($rule, true));
+    }
+
+    public function testBooleanTrueFailsOnFalse(): void
+    {
+        $rule = $this->makeRule(ConditionType::BOOLEAN_TRUE);
+        self::assertFalse($this->evaluator->evaluate($rule, false));
+    }
+
+    public function testBooleanTrueFailsOnNull(): void
+    {
+        $rule = $this->makeRule(ConditionType::BOOLEAN_TRUE);
+        self::assertFalse($this->evaluator->evaluate($rule, null));
+    }
+
+    public function testBooleanTrueFailsOnTruthyInt(): void
+    {
+        $rule = $this->makeRule(ConditionType::BOOLEAN_TRUE);
+        // Must be strictly true, not just truthy.
+        self::assertFalse($this->evaluator->evaluate($rule, 1));
+    }
+
+    // -------------------------------------------------------------------------
+    // DATE_NOT_PAST
+    // -------------------------------------------------------------------------
+
+    public function testDateNotPastPassesWithFutureDate(): void
+    {
+        $rule = $this->makeRule(ConditionType::DATE_NOT_PAST);
+        $future = new \DateTimeImmutable('+1 year');
+        self::assertTrue($this->evaluator->evaluate($rule, $future));
+    }
+
+    public function testDateNotPastFailsWithPastDate(): void
+    {
+        $rule = $this->makeRule(ConditionType::DATE_NOT_PAST);
+        $past = new \DateTimeImmutable('-1 day');
+        self::assertFalse($this->evaluator->evaluate($rule, $past));
+    }
+
+    public function testDateNotPastPassesWithTodayDateString(): void
+    {
+        $rule = $this->makeRule(ConditionType::DATE_NOT_PAST);
+        $today = (new \DateTimeImmutable('today'))->format('Y-m-d');
+        self::assertTrue($this->evaluator->evaluate($rule, $today));
+    }
+
+    public function testDateNotPastFailsWithPastDateString(): void
+    {
+        $rule = $this->makeRule(ConditionType::DATE_NOT_PAST);
+        self::assertFalse($this->evaluator->evaluate($rule, '2000-01-01'));
+    }
+
+    public function testDateNotPastFailsOnNull(): void
+    {
+        $rule = $this->makeRule(ConditionType::DATE_NOT_PAST);
+        self::assertFalse($this->evaluator->evaluate($rule, null));
+    }
+
+    // -------------------------------------------------------------------------
     // Helper
     // -------------------------------------------------------------------------
 

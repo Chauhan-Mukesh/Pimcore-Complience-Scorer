@@ -77,11 +77,13 @@ final class ScoreController extends AbstractController
 
         $profileScores = array_map(
             static fn ($score) => [
-                'profileId'     => $score->getProfileId(),
-                'profileName'   => $profilesById[$score->getProfileId()] ?? 'Unknown Profile',
-                'score'         => $score->getScore(),
-                'missingFields' => $score->getMissingFieldsJson(),
-                'calculatedAt'  => $score->getCalculatedAt()->format(\DateTimeInterface::ATOM),
+                'profileId'       => $score->getProfileId(),
+                'profileName'     => $profilesById[$score->getProfileId()] ?? 'Unknown Profile',
+                'score'           => $score->getScore(),
+                'missingFields'   => $score->getMissingFieldsJson(),
+                'dimensionScores' => $score->getDimensionScores(),
+                'severityCounts'  => $score->getSeverityCounts(),
+                'calculatedAt'    => $score->getCalculatedAt()->format(\DateTimeInterface::ATOM),
             ],
             $scores,
         );

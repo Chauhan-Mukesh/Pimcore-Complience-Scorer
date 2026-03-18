@@ -47,12 +47,38 @@ class ObjectScore
      * JSON array of missing field descriptors.
      *
      * Each element has the shape:
-     *   { "fieldPath": "sku", "label": "SKU / Article Number", "weight": 10.0, "tabHint": "General" }
+     *   {
+     *     "fieldPath": "sku",
+     *     "label": "SKU / Article Number",
+     *     "weight": 10.0,
+     *     "tabHint": "General",
+     *     "severity": "error",
+     *     "dimension": "completeness",
+     *     "errorMessage": null
+     *   }
      *
-     * @var array<int, array{fieldPath: string, label: string, weight: float, tabHint: string|null}>
+     * @var array<int, array{fieldPath: string, label: string, weight: float, tabHint: string|null, severity: string, dimension: string, errorMessage: string|null}>
      */
     #[ORM\Column(type: 'json')]
     private array $missingFieldsJson = [];
+
+    /**
+     * Per-dimension sub-scores (JSON map).
+     * Shape: { "completeness": 80.0, "format": 100.0, ... }
+     *
+     * @var array<string, float>
+     */
+    #[ORM\Column(type: 'json')]
+    private array $dimensionScores = [];
+
+    /**
+     * Violation counts per severity level.
+     * Shape: { "error": 2, "warning": 1, "info": 0 }
+     *
+     * @var array<string, int>
+     */
+    #[ORM\Column(type: 'json')]
+    private array $severityCounts = ['error' => 0, 'warning' => 0, 'info' => 0];
 
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $calculatedAt;
@@ -93,7 +119,7 @@ class ObjectScore
     }
 
     /**
-     * @return array<int, array{fieldPath: string, label: string, weight: float, tabHint: string|null}>
+     * @return array<int, array{fieldPath: string, label: string, weight: float, tabHint: string|null, severity: string, dimension: string, errorMessage: string|null}>
      */
     public function getMissingFieldsJson(): array
     {
@@ -101,11 +127,47 @@ class ObjectScore
     }
 
     /**
-     * @param array<int, array{fieldPath: string, label: string, weight: float, tabHint: string|null}> $missingFieldsJson
+     * @param array<int, array{fieldPath: string, label: string, weight: float, tabHint: string|null, severity: string, dimension: string, errorMessage: string|null}> $missingFieldsJson
      */
     public function setMissingFieldsJson(array $missingFieldsJson): static
     {
         $this->missingFieldsJson = $missingFieldsJson;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, float>
+     */
+    public function getDimensionScores(): array
+    {
+        return $this->dimensionScores;
+    }
+
+    /**
+     * @param array<string, float> $dimensionScores
+     */
+    public function setDimensionScores(array $dimensionScores): static
+    {
+        $this->dimensionScores = $dimensionScores;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    public function getSeverityCounts(): array
+    {
+        return $this->severityCounts;
+    }
+
+    /**
+     * @param array<string, int> $severityCounts
+     */
+    public function setSeverityCounts(array $severityCounts): static
+    {
+        $this->severityCounts = $severityCounts;
 
         return $this;
     }
