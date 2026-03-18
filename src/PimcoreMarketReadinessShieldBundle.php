@@ -27,6 +27,7 @@ final class PimcoreMarketReadinessShieldBundle extends AbstractRegisteredBundle
      */
     public const WIDGET_JS_PATH =
         '/bundles/pimcoremarketreadinessshield/studio/dist/market-readiness-shield.iife.js';
+
     public function getNiceName(): string
     {
         return 'Market Readiness Shield';
