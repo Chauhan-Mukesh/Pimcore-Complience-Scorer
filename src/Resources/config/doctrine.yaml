@@ -1,0 +1,9 @@
+doctrine:
+    orm:
+        mappings:
+            PimcoreMarketReadinessShieldBundle:
+                is_bundle: true
+                type: attribute
+                dir: '%kernel.project_dir%/vendor/chauhan-mukesh/pimcore-market-readiness-shield/src/Entity'
+                prefix: 'CauhanMukesh\PimcoreMarketReadinessShieldBundle\Entity'
+                alias: PimcoreMarketReadinessShieldBundle

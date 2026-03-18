@@ -1,0 +1,38 @@
+pimcore_market_readiness_shield_api_score:
+    path: /api/readiness/score/{objectId}
+    controller: CauhanMukesh\PimcoreMarketReadinessShieldBundle\Controller\Api\ScoreController::score
+    methods: [GET]
+    requirements:
+        objectId: '\d+'
+
+pimcore_market_readiness_shield_api_recalculate:
+    path: /api/readiness/score/{objectId}/recalculate
+    controller: CauhanMukesh\PimcoreMarketReadinessShieldBundle\Controller\Api\ScoreController::recalculate
+    methods: [POST]
+    requirements:
+        objectId: '\d+'
+
+pimcore_market_readiness_shield_admin_profile_list:
+    path: /api/readiness/admin/profiles
+    controller: CauhanMukesh\PimcoreMarketReadinessShieldBundle\Controller\Admin\ProfileController::list
+    methods: [GET]
+
+pimcore_market_readiness_shield_admin_profile_get:
+    path: /api/readiness/admin/profiles/{id}
+    controller: CauhanMukesh\PimcoreMarketReadinessShieldBundle\Controller\Admin\ProfileController::get
+    methods: [GET]
+
+pimcore_market_readiness_shield_admin_profile_create:
+    path: /api/readiness/admin/profiles
+    controller: CauhanMukesh\PimcoreMarketReadinessShieldBundle\Controller\Admin\ProfileController::create
+    methods: [POST]
+
+pimcore_market_readiness_shield_admin_profile_update:
+    path: /api/readiness/admin/profiles/{id}
+    controller: CauhanMukesh\PimcoreMarketReadinessShieldBundle\Controller\Admin\ProfileController::update
+    methods: [PUT]
+
+pimcore_market_readiness_shield_admin_profile_delete:
+    path: /api/readiness/admin/profiles/{id}
+    controller: CauhanMukesh\PimcoreMarketReadinessShieldBundle\Controller\Admin\ProfileController::delete
+    methods: [DELETE]
