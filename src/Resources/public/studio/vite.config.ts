@@ -10,18 +10,14 @@ export default defineConfig({
             entry: resolve(__dirname, 'src/index.ts'),
             name: 'PimcoreMarketReadinessShield',
             fileName: 'market-readiness-shield',
-            formats: ['es'],
+            formats: ['iife'],
         },
         rollupOptions: {
-            external: ['react', 'react-dom'],
-            output: {
-                globals: {
-                    react: 'React',
-                    'react-dom': 'ReactDOM',
-                },
-            },
+            // React is bundled into the IIFE so the script works standalone
+            // when loaded via getJsPaths() without any external dependencies.
         },
         outDir: 'dist',
-        sourcemap: true,
+        sourcemap: 'hidden',
+        minify: true,
     },
 });

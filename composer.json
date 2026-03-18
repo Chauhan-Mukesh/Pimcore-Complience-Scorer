@@ -23,7 +23,6 @@
     ],
     "require": {
         "php": ">=8.2",
-        "pimcore/pimcore": ">=2025.4 <2027.0",
         "symfony/framework-bundle": "^7.1",
         "symfony/messenger": "^7.1",
         "symfony/doctrine-messenger": "^7.1",
@@ -37,13 +36,13 @@
         "doctrine/doctrine-migrations-bundle": "^3.3"
     },
     "require-dev": {
+        "pimcore/pimcore": ">=2025.4",
         "phpunit/phpunit": "^11.0",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-symfony": "^2.0",
         "phpstan/phpstan-doctrine": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
         "friendsofphp/php-cs-fixer": "^3.60",
-        "vimeo/psalm": "^5.26",
         "symfony/test-pack": "^1.0"
     },
     "autoload": {
@@ -69,6 +68,9 @@
             ]
         }
     },
-    "minimum-stability": "stable",
+    "suggest": {
+        "pimcore/pimcore": "Required in the host application (>=2025.4)"
+    },
+    "minimum-stability": "dev",
     "prefer-stable": true
 }

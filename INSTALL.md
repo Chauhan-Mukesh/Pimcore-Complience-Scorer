@@ -127,15 +127,18 @@ stdout_logfile=/var/log/messenger.out.log
 
 ---
 
-## Step 7 — Build Studio UI Assets
-
-If you are developing locally or customising the widget:
+## Step 7 — Install Public Assets
 
 ```bash
-cd vendor/chauhan-mukesh/pimcore-market-readiness-shield/src/Resources/public/studio
-pnpm install
-pnpm run build
+php bin/console pimcore:assets:install --symlink
 ```
+
+This symlinks the prebuilt Studio widget JS (included in the package) into the
+Pimcore public directory. The widget loads automatically in the admin — no extra
+YAML or PHP configuration is needed.
+
+> **No rebuild required**: The compiled widget is shipped with the package and
+> committed to the repository, so `pnpm` / Node.js is not required in production.
 
 ---
 

@@ -28,7 +28,7 @@
 
 # ── Node / Studio UI ────────────────────────────────────────────────────────
 src/Resources/public/studio/node_modules/
-src/Resources/public/studio/dist/
+# dist IS committed — it ships the prebuilt widget so bundles.php enable is zero-config
 src/Resources/public/studio/.vite/
 src/Resources/public/studio/coverage/
 
