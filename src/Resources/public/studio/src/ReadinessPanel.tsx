@@ -121,7 +121,7 @@ export const ReadinessPanel: React.FC<ReadinessPanelProps> = ({ objectId }) => {
         );
     }
 
-    if (scoreData?.status === 'pending' || activeProfile === null) {
+    if (scoreData === null || scoreData.status === 'pending' || activeProfile === null) {
         return (
             <div style={styles.panel}>
                 <p style={styles.muted}>⏳ Score calculation in progress…</p>

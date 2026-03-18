@@ -23,7 +23,7 @@
     ],
     "require": {
         "php": ">=8.2",
-        "pimcore/pimcore": ">=2025.4",
+        "pimcore/pimcore": ">=2025.4 <2027.0",
         "symfony/framework-bundle": "^7.1",
         "symfony/messenger": "^7.1",
         "symfony/doctrine-messenger": "^7.1",
