@@ -1,51 +1,52 @@
-# Cache and logs (Symfony2)
-/app/cache/*
-/app/logs/*
-!app/cache/.gitkeep
-!app/logs/.gitkeep
-
-# Email spool folder
-/app/spool/*
-
-# Cache, session files and logs (Symfony3)
+# ── Symfony / PHP ───────────────────────────────────────────────────────────
 /var/cache/*
 /var/logs/*
+/var/log/*
 /var/sessions/*
 !var/cache/.gitkeep
 !var/logs/.gitkeep
+!var/log/.gitkeep
 !var/sessions/.gitkeep
 
-# Logs (Symfony4)
-/var/log/*
-!var/log/.gitkeep
-
-# Parameters
-/app/config/parameters.yml
-/app/config/parameters.ini
-
-# Managed by Composer
-/app/bootstrap.php.cache
-/var/bootstrap.php.cache
-/bin/*
-!bin/console
-!bin/symfony_requirements
 /vendor/
-
-# Assets and user uploads
-/web/bundles/
-/web/uploads/
+/composer.phar
+/composer.lock
 
 # PHPUnit
-/app/phpunit.xml
 /phpunit.xml
+/.phpunit.cache/
+/coverage/
 
-# Build data
+# PHP-CS-Fixer cache
+/.php-cs-fixer.cache
+
+# PHPStan cache
+/.phpstan/
+
+# Psalm cache
+/.psalm/
+
+# ── Node / Studio UI ────────────────────────────────────────────────────────
+src/Resources/public/studio/node_modules/
+src/Resources/public/studio/dist/
+src/Resources/public/studio/.vite/
+src/Resources/public/studio/coverage/
+
+# pnpm lockfile changes are intentional — keep it
+# src/Resources/public/studio/pnpm-lock.yaml
+
+# ── IDE / OS ────────────────────────────────────────────────────────────────
+/.idea/
+/.vscode/
+*.DS_Store
+*.swp
+*.swo
+Thumbs.db
+
+# ── Build artifacts ─────────────────────────────────────────────────────────
 /build/
 
-# Composer PHAR
-/composer.phar
-
-# Backup entities generated with doctrine:generate:entities command
+# Backup entities
 **/Entity/*~
 
 # Embedded web-server pid file

@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches: ["main", "develop", "copilot/**"]
+  pull_request:
+    branches: ["main", "develop"]
+
+env:
+  PHP_VERSION: "8.2"
+  NODE_VERSION: "20"
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # PHP Quality & Tests
+  # ---------------------------------------------------------------------------
+  php-quality:
+    name: PHP Quality (PHP ${{ matrix.php }})
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    strategy:
+      matrix:
+        php: ["8.2", "8.3"]
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: intl, pdo_mysql, mbstring, xml, json
+          coverage: xdebug
+          tools: composer:v2, php-cs-fixer, phpstan
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: PHP-CS-Fixer (dry-run)
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff --config=.php-cs-fixer.php
+        env:
+          PHP_CS_FIXER_IGNORE_ENV: "1"
+
+      - name: PHPUnit (unit tests)
+        run: vendor/bin/phpunit --testsuite unit --coverage-clover coverage/clover.xml
+        env:
+          XDEBUG_MODE: coverage
+
+      - name: Upload coverage report
+        if: matrix.php == '8.2'
+        uses: actions/upload-artifact@v4
+        with:
+          name: php-coverage
+          path: coverage/clover.xml
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # Studio UI Build
+  # ---------------------------------------------------------------------------
+  studio-ui-build:
+    name: Studio UI Build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+
+    defaults:
+      run:
+        working-directory: src/Resources/public/studio
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable Corepack / pnpm
+        run: corepack enable && corepack prepare pnpm@latest --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: TypeScript type-check
+        run: pnpm run type-check
+
+      - name: ESLint
+        run: pnpm run lint
+
+      - name: Build
+        run: pnpm run build
+
+  # ---------------------------------------------------------------------------
+  # SonarCloud (runs after PHP tests have uploaded coverage)
+  # ---------------------------------------------------------------------------
+  sonar:
+    name: SonarCloud Scan
+    runs-on: ubuntu-24.04
+    needs: [php-quality, studio-ui-build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download PHP coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: php-coverage
+          path: coverage/
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

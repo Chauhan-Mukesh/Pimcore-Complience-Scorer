@@ -1,0 +1,54 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # -------------------------------------------------------------------------
+    # Services
+    # -------------------------------------------------------------------------
+    CauhanMukesh\PimcoreMarketReadinessShieldBundle\Service\FieldAccessor: ~
+
+    CauhanMukesh\PimcoreMarketReadinessShieldBundle\Service\RuleEvaluator: ~
+
+    CauhanMukesh\PimcoreMarketReadinessShieldBundle\Service\ReadinessScoreCalculator: ~
+
+    # -------------------------------------------------------------------------
+    # Messenger
+    # -------------------------------------------------------------------------
+    CauhanMukesh\PimcoreMarketReadinessShieldBundle\Messenger\CalculateScoreHandler:
+        tags:
+            - { name: messenger.message_handler }
+
+    # -------------------------------------------------------------------------
+    # Event Subscribers
+    # -------------------------------------------------------------------------
+    CauhanMukesh\PimcoreMarketReadinessShieldBundle\EventSubscriber\ObjectUpdateSubscriber:
+        tags:
+            - { name: kernel.event_subscriber }
+
+    # -------------------------------------------------------------------------
+    # Repositories
+    # -------------------------------------------------------------------------
+    CauhanMukesh\PimcoreMarketReadinessShieldBundle\Repository\ReadinessProfileRepository:
+        arguments:
+            $registry: '@doctrine'
+
+    CauhanMukesh\PimcoreMarketReadinessShieldBundle\Repository\ReadinessRuleRepository:
+        arguments:
+            $registry: '@doctrine'
+
+    CauhanMukesh\PimcoreMarketReadinessShieldBundle\Repository\ObjectScoreRepository:
+        arguments:
+            $registry: '@doctrine'
+
+    # -------------------------------------------------------------------------
+    # Controllers
+    # -------------------------------------------------------------------------
+    CauhanMukesh\PimcoreMarketReadinessShieldBundle\Controller\Api\ScoreController:
+        tags: ['controller.service_arguments']
+        public: true
+
+    CauhanMukesh\PimcoreMarketReadinessShieldBundle\Controller\Admin\ProfileController:
+        tags: ['controller.service_arguments']
+        public: true
