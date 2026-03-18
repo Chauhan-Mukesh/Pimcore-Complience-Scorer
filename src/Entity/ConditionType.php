@@ -93,26 +93,26 @@ enum ConditionType: string
     public function label(): string
     {
         return match ($this) {
-            self::NOT_EMPTY          => 'Not empty',
-            self::FILE_ATTACHED      => 'File / asset attached',
-            self::MIN_LENGTH         => 'Minimum length',
-            self::MAX_LENGTH         => 'Maximum length',
-            self::WORD_COUNT_MIN     => 'Minimum word count',
-            self::WORD_COUNT_MAX     => 'Maximum word count',
-            self::MIN_VALUE          => 'Minimum value',
-            self::MAX_VALUE          => 'Maximum value',
-            self::IS_NUMERIC         => 'Is numeric',
-            self::REGEX              => 'Matches regex',
-            self::IS_URL             => 'Valid URL',
-            self::IS_EMAIL           => 'Valid e-mail',
-            self::IN_SET             => 'Value in set',
-            self::NOT_IN_SET         => 'Value not in set',
+            self::NOT_EMPTY => 'Not empty',
+            self::FILE_ATTACHED => 'File / asset attached',
+            self::MIN_LENGTH => 'Minimum length',
+            self::MAX_LENGTH => 'Maximum length',
+            self::WORD_COUNT_MIN => 'Minimum word count',
+            self::WORD_COUNT_MAX => 'Maximum word count',
+            self::MIN_VALUE => 'Minimum value',
+            self::MAX_VALUE => 'Maximum value',
+            self::IS_NUMERIC => 'Is numeric',
+            self::REGEX => 'Matches regex',
+            self::IS_URL => 'Valid URL',
+            self::IS_EMAIL => 'Valid e-mail',
+            self::IN_SET => 'Value in set',
+            self::NOT_IN_SET => 'Value not in set',
             self::RELATION_COUNT_MIN => 'Min. relation count',
             self::RELATION_COUNT_MAX => 'Max. relation count',
-            self::HAS_RELATION       => 'Has relation',
-            self::IMAGE_HAS_ALT      => 'Image has alt text',
-            self::BOOLEAN_TRUE       => 'Boolean is true',
-            self::DATE_NOT_PAST      => 'Date not in the past',
+            self::HAS_RELATION => 'Has relation',
+            self::IMAGE_HAS_ALT => 'Image has alt text',
+            self::BOOLEAN_TRUE => 'Boolean is true',
+            self::DATE_NOT_PAST => 'Date not in the past',
         };
     }
 
@@ -133,7 +133,7 @@ enum ConditionType: string
             self::NOT_IN_SET,
             self::RELATION_COUNT_MIN,
             self::RELATION_COUNT_MAX => true,
-            default                  => false,
+            default => false,
         };
     }
 }

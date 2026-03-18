@@ -64,7 +64,7 @@ class ObjectScore
 
     /**
      * Per-dimension sub-scores (JSON map).
-     * Shape: { "completeness": 80.0, "format": 100.0, ... }
+     * Shape: { "completeness": 80.0, "format": 100.0, ... }.
      *
      * @var array<string, float>
      */
@@ -73,7 +73,7 @@ class ObjectScore
 
     /**
      * Violation counts per severity level.
-     * Shape: { "error": 2, "warning": 1, "info": 0 }
+     * Shape: { "error": 2, "warning": 1, "info": 0 }.
      *
      * @var array<string, int>
      */

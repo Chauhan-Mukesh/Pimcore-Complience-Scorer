@@ -58,12 +58,12 @@ final class ScoreController extends AbstractController
         $scores = $this->scoreRepository->findByObjectId($objectId);
 
         // If no scores exist, dispatch calculation and return pending state.
-        if (count($scores) === 0) {
+        if (0 === \count($scores)) {
             $this->messageBus->dispatch(new CalculateScoreMessage($objectId));
 
             return $this->json([
                 'objectId' => $objectId,
-                'status'   => 'pending',
+                'status' => 'pending',
                 'profiles' => [],
             ], Response::HTTP_ACCEPTED);
         }
@@ -77,20 +77,20 @@ final class ScoreController extends AbstractController
 
         $profileScores = array_map(
             static fn ($score) => [
-                'profileId'       => $score->getProfileId(),
-                'profileName'     => $profilesById[$score->getProfileId()] ?? 'Unknown Profile',
-                'score'           => $score->getScore(),
-                'missingFields'   => $score->getMissingFieldsJson(),
+                'profileId' => $score->getProfileId(),
+                'profileName' => $profilesById[$score->getProfileId()] ?? 'Unknown Profile',
+                'score' => $score->getScore(),
+                'missingFields' => $score->getMissingFieldsJson(),
                 'dimensionScores' => $score->getDimensionScores(),
-                'severityCounts'  => $score->getSeverityCounts(),
-                'calculatedAt'    => $score->getCalculatedAt()->format(\DateTimeInterface::ATOM),
+                'severityCounts' => $score->getSeverityCounts(),
+                'calculatedAt' => $score->getCalculatedAt()->format(\DateTimeInterface::ATOM),
             ],
             $scores,
         );
 
         return $this->json([
             'objectId' => $objectId,
-            'status'   => 'ready',
+            'status' => 'ready',
             'profiles' => $profileScores,
         ]);
     }
@@ -113,7 +113,7 @@ final class ScoreController extends AbstractController
         $this->messageBus->dispatch(new CalculateScoreMessage($objectId));
 
         return $this->json([
-            'message'  => 'Score recalculation queued.',
+            'message' => 'Score recalculation queued.',
             'objectId' => $objectId,
         ], Response::HTTP_ACCEPTED);
     }

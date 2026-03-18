@@ -34,8 +34,8 @@ final class PimcoreMarketReadinessShieldExtension extends Extension implements P
                 'asset_manager' => [
                     'entries' => [
                         [
-                            'name'  => 'market-readiness-shield',
-                            'path'  => PimcoreMarketReadinessShieldBundle::WIDGET_JS_PATH,
+                            'name' => 'market-readiness-shield',
+                            'path' => PimcoreMarketReadinessShieldBundle::WIDGET_JS_PATH,
                         ],
                     ],
                 ],

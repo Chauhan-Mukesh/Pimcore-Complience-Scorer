@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -44,15 +43,15 @@ final class ProfileController extends AbstractController
         $profiles = $this->profileRepository->findBy([], ['name' => 'ASC']);
 
         $data = array_map(static fn (ReadinessProfile $p) => [
-            'id'               => $p->getId(),
-            'name'             => $p->getName(),
-            'description'      => $p->getDescription(),
+            'id' => $p->getId(),
+            'name' => $p->getName(),
+            'description' => $p->getDescription(),
             'pimcoreClassName' => $p->getPimcoreClassName(),
-            'isActive'         => $p->isActive(),
-            'totalWeight'      => $p->getTotalWeight(),
-            'ruleCount'        => $p->getRules()->count(),
-            'createdAt'        => $p->getCreatedAt()->format(\DateTimeInterface::ATOM),
-            'updatedAt'        => $p->getUpdatedAt()->format(\DateTimeInterface::ATOM),
+            'isActive' => $p->isActive(),
+            'totalWeight' => $p->getTotalWeight(),
+            'ruleCount' => $p->getRules()->count(),
+            'createdAt' => $p->getCreatedAt()->format(\DateTimeInterface::ATOM),
+            'updatedAt' => $p->getUpdatedAt()->format(\DateTimeInterface::ATOM),
         ], $profiles);
 
         return $this->json($data);
@@ -83,7 +82,7 @@ final class ProfileController extends AbstractController
     public function create(Request $request): JsonResponse
     {
         $data = $this->decodeJson($request);
-        if ($data === null) {
+        if (null === $data) {
             return $this->json(['error' => 'Invalid JSON body.'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -96,7 +95,7 @@ final class ProfileController extends AbstractController
         $this->applyRules($profile, $data['rules'] ?? []);
 
         $violations = $this->validator->validate($profile);
-        if (count($violations) > 0) {
+        if (\count($violations) > 0) {
             return $this->json(['errors' => $this->formatViolations($violations)], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -119,7 +118,7 @@ final class ProfileController extends AbstractController
         }
 
         $data = $this->decodeJson($request);
-        if ($data === null) {
+        if (null === $data) {
             return $this->json(['error' => 'Invalid JSON body.'], Response::HTTP_BAD_REQUEST);
         }
 
@@ -127,19 +126,19 @@ final class ProfileController extends AbstractController
             $profile->setName((string) $data['name']);
         }
 
-        if (array_key_exists('description', $data)) {
-            $profile->setDescription($data['description'] !== null ? (string) $data['description'] : null);
+        if (\array_key_exists('description', $data)) {
+            $profile->setDescription(null !== $data['description'] ? (string) $data['description'] : null);
         }
 
         if (isset($data['pimcoreClassName'])) {
             $profile->setPimcoreClassName((string) $data['pimcoreClassName']);
         }
 
-        if (array_key_exists('isActive', $data)) {
+        if (\array_key_exists('isActive', $data)) {
             $profile->setIsActive((bool) $data['isActive']);
         }
 
-        if (array_key_exists('rules', $data)) {
+        if (\array_key_exists('rules', $data)) {
             // Remove all existing rules and re-apply.
             foreach ($profile->getRules()->toArray() as $rule) {
                 $profile->removeRule($rule);
@@ -148,7 +147,7 @@ final class ProfileController extends AbstractController
         }
 
         $violations = $this->validator->validate($profile);
-        if (count($violations) > 0) {
+        if (\count($violations) > 0) {
             return $this->json(['errors' => $this->formatViolations($violations)], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -187,14 +186,14 @@ final class ProfileController extends AbstractController
     private function applyRules(ReadinessProfile $profile, array $rulesData): void
     {
         foreach ($rulesData as $index => $ruleData) {
-            if (!is_array($ruleData)) {
+            if (!\is_array($ruleData)) {
                 continue;
             }
 
             $conditionTypeValue = (string) ($ruleData['conditionType'] ?? '');
             $conditionType = ConditionType::tryFrom($conditionTypeValue);
 
-            if ($conditionType === null) {
+            if (null === $conditionType) {
                 continue;
             }
 
@@ -220,13 +219,13 @@ final class ProfileController extends AbstractController
     {
         try {
             $content = $request->getContent();
-            if ($content === '') {
+            if ('' === $content) {
                 return null;
             }
 
             $decoded = json_decode($content, true, 512, \JSON_THROW_ON_ERROR);
 
-            return is_array($decoded) ? $decoded : null;
+            return \is_array($decoded) ? $decoded : null;
         } catch (\JsonException) {
             return null;
         }
@@ -238,31 +237,32 @@ final class ProfileController extends AbstractController
     private function serializeProfile(ReadinessProfile $profile): array
     {
         $rules = array_map(static fn (ReadinessRule $r) => [
-            'id'             => $r->getId(),
-            'fieldPath'      => $r->getFieldPath(),
-            'conditionType'  => $r->getConditionType()->value,
+            'id' => $r->getId(),
+            'fieldPath' => $r->getFieldPath(),
+            'conditionType' => $r->getConditionType()->value,
             'conditionValue' => $r->getConditionValue(),
-            'weight'         => $r->getWeight(),
-            'label'          => $r->getLabel(),
-            'tabHint'        => $r->getTabHint(),
-            'sortOrder'      => $r->getSortOrder(),
+            'weight' => $r->getWeight(),
+            'label' => $r->getLabel(),
+            'tabHint' => $r->getTabHint(),
+            'sortOrder' => $r->getSortOrder(),
         ], $profile->getRules()->toArray());
 
         return [
-            'id'               => $profile->getId(),
-            'name'             => $profile->getName(),
-            'description'      => $profile->getDescription(),
+            'id' => $profile->getId(),
+            'name' => $profile->getName(),
+            'description' => $profile->getDescription(),
             'pimcoreClassName' => $profile->getPimcoreClassName(),
-            'isActive'         => $profile->isActive(),
-            'totalWeight'      => $profile->getTotalWeight(),
-            'rules'            => $rules,
-            'createdAt'        => $profile->getCreatedAt()->format(\DateTimeInterface::ATOM),
-            'updatedAt'        => $profile->getUpdatedAt()->format(\DateTimeInterface::ATOM),
+            'isActive' => $profile->isActive(),
+            'totalWeight' => $profile->getTotalWeight(),
+            'rules' => $rules,
+            'createdAt' => $profile->getCreatedAt()->format(\DateTimeInterface::ATOM),
+            'updatedAt' => $profile->getUpdatedAt()->format(\DateTimeInterface::ATOM),
         ];
     }
 
     /**
      * @param ConstraintViolationListInterface<\Symfony\Component\Validator\ConstraintViolationInterface> $violations
+     *
      * @return array<string, string>
      */
     private function formatViolations(ConstraintViolationListInterface $violations): array

@@ -21,23 +21,23 @@ namespace CauhanMukesh\PimcoreMarketReadinessShieldBundle\Entity;
 enum QualityDimension: string
 {
     case COMPLETENESS = 'completeness';
-    case CONSISTENCY  = 'consistency';
-    case ACCURACY     = 'accuracy';
-    case FORMAT       = 'format';
-    case UNIQUENESS   = 'uniqueness';
-    case CONFORMITY   = 'conformity';
-    case TIMELINESS   = 'timeliness';
+    case CONSISTENCY = 'consistency';
+    case ACCURACY = 'accuracy';
+    case FORMAT = 'format';
+    case UNIQUENESS = 'uniqueness';
+    case CONFORMITY = 'conformity';
+    case TIMELINESS = 'timeliness';
 
     public function label(): string
     {
         return match ($this) {
             self::COMPLETENESS => 'Completeness',
-            self::CONSISTENCY  => 'Consistency',
-            self::ACCURACY     => 'Accuracy',
-            self::FORMAT       => 'Format',
-            self::UNIQUENESS   => 'Uniqueness',
-            self::CONFORMITY   => 'Conformity',
-            self::TIMELINESS   => 'Timeliness',
+            self::CONSISTENCY => 'Consistency',
+            self::ACCURACY => 'Accuracy',
+            self::FORMAT => 'Format',
+            self::UNIQUENESS => 'Uniqueness',
+            self::CONFORMITY => 'Conformity',
+            self::TIMELINESS => 'Timeliness',
         };
     }
 
@@ -48,12 +48,12 @@ enum QualityDimension: string
     {
         return match ($this) {
             self::COMPLETENESS => '📋',
-            self::CONSISTENCY  => '🔗',
-            self::ACCURACY     => '🎯',
-            self::FORMAT       => '🔤',
-            self::UNIQUENESS   => '✨',
-            self::CONFORMITY   => '📚',
-            self::TIMELINESS   => '⏱',
+            self::CONSISTENCY => '🔗',
+            self::ACCURACY => '🎯',
+            self::FORMAT => '🔤',
+            self::UNIQUENESS => '✨',
+            self::CONFORMITY => '📚',
+            self::TIMELINESS => '⏱',
         };
     }
 }

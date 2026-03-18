@@ -35,14 +35,14 @@ final class ReadinessScoreCalculator
     /**
      * Calculates the score for the given object against the given profile.
      *
-     * @return ObjectScore Hydrated but not yet persisted.
+     * @return ObjectScore hydrated but not yet persisted
      */
     public function calculate(Concrete $object, ReadinessProfile $profile): ObjectScore
     {
         /** @var ReadinessRule[] $rules */
         $rules = $profile->getRules()->toArray();
 
-        $totalWeight  = 0.0;
+        $totalWeight = 0.0;
         $passedWeight = 0.0;
 
         // Per-dimension accumulators: [dimension => [total, passed]]
@@ -52,18 +52,18 @@ final class ReadinessScoreCalculator
         // Severity violation counters.
         /** @var array<string, int> $severityCounts */
         $severityCounts = [
-            SeverityLevel::ERROR->value   => 0,
+            SeverityLevel::ERROR->value => 0,
             SeverityLevel::WARNING->value => 0,
-            SeverityLevel::INFO->value    => 0,
+            SeverityLevel::INFO->value => 0,
         ];
 
         /** @var array<int, array{fieldPath: string, label: string, weight: float, tabHint: string|null, severity: string, dimension: string, errorMessage: string|null}> $missingFields */
         $missingFields = [];
 
         foreach ($rules as $rule) {
-            $weight    = $rule->getWeight();
-            $dimKey    = $rule->getDimension()->value;
-            $sevKey    = $rule->getSeverity()->value;
+            $weight = $rule->getWeight();
+            $dimKey = $rule->getDimension()->value;
+            $sevKey = $rule->getSeverity()->value;
 
             $totalWeight += $weight;
 
@@ -73,20 +73,20 @@ final class ReadinessScoreCalculator
             }
             $dimAccum[$dimKey]['total'] += $weight;
 
-            $value  = $this->fieldAccessor->getValue($object, $rule->getFieldPath());
+            $value = $this->fieldAccessor->getValue($object, $rule->getFieldPath());
             $passes = $this->ruleEvaluator->evaluate($rule, $value);
 
             if ($passes) {
-                $passedWeight                  += $weight;
-                $dimAccum[$dimKey]['passed']   += $weight;
+                $passedWeight += $weight;
+                $dimAccum[$dimKey]['passed'] += $weight;
             } else {
                 $missingFields[] = [
-                    'fieldPath'    => $rule->getFieldPath(),
-                    'label'        => $rule->getLabel(),
-                    'weight'       => $weight,
-                    'tabHint'      => $rule->getTabHint(),
-                    'severity'     => $sevKey,
-                    'dimension'    => $dimKey,
+                    'fieldPath' => $rule->getFieldPath(),
+                    'label' => $rule->getLabel(),
+                    'weight' => $weight,
+                    'tabHint' => $rule->getTabHint(),
+                    'severity' => $sevKey,
+                    'dimension' => $dimKey,
                     'errorMessage' => $rule->getErrorMessage(),
                 ];
                 $severityCounts[$sevKey] = ($severityCounts[$sevKey] ?? 0) + 1;
@@ -121,7 +121,6 @@ final class ReadinessScoreCalculator
     }
 }
 
-
 /**
  * Calculates the readiness score for a DataObject against a ReadinessProfile.
  *
@@ -143,7 +142,7 @@ final class ReadinessScoreCalculator
     /**
      * Calculates the score for the given object against the given profile.
      *
-     * @return ObjectScore Hydrated but not yet persisted.
+     * @return ObjectScore hydrated but not yet persisted
      */
     public function calculate(Concrete $object, ReadinessProfile $profile): ObjectScore
     {
@@ -155,7 +154,7 @@ final class ReadinessScoreCalculator
         $missingFields = [];
 
         foreach ($rules as $rule) {
-            /** @var ReadinessRule $rule */
+            /* @var ReadinessRule $rule */
             $totalWeight += $rule->getWeight();
             $value = $this->fieldAccessor->getValue($object, $rule->getFieldPath());
             $passes = $this->ruleEvaluator->evaluate($rule, $value);
@@ -165,9 +164,9 @@ final class ReadinessScoreCalculator
             } else {
                 $missingFields[] = [
                     'fieldPath' => $rule->getFieldPath(),
-                    'label'     => $rule->getLabel(),
-                    'weight'    => $rule->getWeight(),
-                    'tabHint'   => $rule->getTabHint(),
+                    'label' => $rule->getLabel(),
+                    'weight' => $rule->getWeight(),
+                    'tabHint' => $rule->getTabHint(),
                 ];
             }
         }

@@ -40,20 +40,20 @@ final class FieldAccessor
     private function resolveSegments(mixed $current, array $segments): mixed
     {
         foreach ($segments as $index => $segment) {
-            if ($current === null) {
+            if (null === $current) {
                 return null;
             }
 
             // Numeric segment — treat as array index.
             if (ctype_digit($segment)) {
-                if (!is_array($current) && !($current instanceof \Traversable)) {
+                if (!\is_array($current) && !($current instanceof \Traversable)) {
                     return null;
                 }
 
-                $arr = is_array($current) ? $current : iterator_to_array($current);
+                $arr = \is_array($current) ? $current : iterator_to_array($current);
                 $intIndex = (int) $segment;
 
-                if (!array_key_exists($intIndex, $arr)) {
+                if (!\array_key_exists($intIndex, $arr)) {
                     return null;
                 }
 
@@ -62,23 +62,23 @@ final class FieldAccessor
             }
 
             // Localised fields shorthand: "localizedfields.{locale}.{field}"
-            if ($segment === 'localizedfields' && $current instanceof Concrete) {
-                $remainingSegments = array_slice($segments, $index + 1);
-                if (count($remainingSegments) < 2) {
+            if ('localizedfields' === $segment && $current instanceof Concrete) {
+                $remainingSegments = \array_slice($segments, $index + 1);
+                if (\count($remainingSegments) < 2) {
                     return null;
                 }
 
                 [$locale, $fieldName] = [$remainingSegments[0], $remainingSegments[1]];
                 $localizedFields = $current->getLocalizedFields();
-                if ($localizedFields === null) {
+                if (null === $localizedFields) {
                     return null;
                 }
 
                 $value = $localizedFields->getLocalizedValue($fieldName, $locale);
 
                 // If there are further segments after locale and field, recurse.
-                $deeperSegments = array_slice($remainingSegments, 2);
-                if (count($deeperSegments) > 0) {
+                $deeperSegments = \array_slice($remainingSegments, 2);
+                if (\count($deeperSegments) > 0) {
                     return $this->resolveSegments($value, $deeperSegments);
                 }
 
@@ -86,9 +86,9 @@ final class FieldAccessor
             }
 
             // Object Bricks shorthand: "bricks.{BrickType}.{field}"
-            if ($segment === 'bricks' && $current instanceof Concrete) {
-                $remainingSegments = array_slice($segments, $index + 1);
-                if (count($remainingSegments) < 2) {
+            if ('bricks' === $segment && $current instanceof Concrete) {
+                $remainingSegments = \array_slice($segments, $index + 1);
+                if (\count($remainingSegments) < 2) {
                     return null;
                 }
 
@@ -96,7 +96,7 @@ final class FieldAccessor
                 $getter = 'get' . ucfirst($brickType);
 
                 $brickContainer = $current->getObjectVars()['objectbricks'] ?? null;
-                if ($brickContainer === null) {
+                if (null === $brickContainer) {
                     // Try via generic getter if available.
                     if (!method_exists($current, $getter)) {
                         return null;
@@ -106,11 +106,11 @@ final class FieldAccessor
                     $brick = method_exists($brickContainer, $getter) ? $brickContainer->{$getter}() : null;
                 }
 
-                if ($brick === null) {
+                if (null === $brick) {
                     return null;
                 }
 
-                $deeperSegments = array_slice($remainingSegments, 2);
+                $deeperSegments = \array_slice($remainingSegments, 2);
                 $fieldGetter = 'get' . ucfirst($fieldName);
 
                 if (!method_exists($brick, $fieldGetter)) {
@@ -119,7 +119,7 @@ final class FieldAccessor
 
                 $value = $brick->{$fieldGetter}();
 
-                if (count($deeperSegments) > 0) {
+                if (\count($deeperSegments) > 0) {
                     return $this->resolveSegments($value, $deeperSegments);
                 }
 
@@ -129,13 +129,13 @@ final class FieldAccessor
             // Generic getter: try getFieldName() on the current object/value.
             $getter = 'get' . ucfirst($segment);
 
-            if (is_object($current) && method_exists($current, $getter)) {
+            if (\is_object($current) && method_exists($current, $getter)) {
                 $current = $current->{$getter}();
                 continue;
             }
 
             // Try direct array access.
-            if (is_array($current) && array_key_exists($segment, $current)) {
+            if (\is_array($current) && \array_key_exists($segment, $current)) {
                 $current = $current[$segment];
                 continue;
             }

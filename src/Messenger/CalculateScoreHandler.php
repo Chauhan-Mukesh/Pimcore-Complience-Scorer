@@ -45,7 +45,7 @@ final class CalculateScoreHandler
         $className = $object->getClassName();
         $profiles = $this->profileRepository->findActiveByClassName($className);
 
-        if (count($profiles) === 0) {
+        if (0 === \count($profiles)) {
             $this->logger->debug(
                 'ReadinessShield: No active profiles for class {className} (objectId={objectId}).',
                 ['className' => $className, 'objectId' => $objectId],
@@ -62,19 +62,19 @@ final class CalculateScoreHandler
                 $this->logger->info(
                     'ReadinessShield: Score calculated for objectId={objectId}, profile={profileName}: {score}%',
                     [
-                        'objectId'    => $objectId,
+                        'objectId' => $objectId,
                         'profileName' => $profile->getName(),
-                        'score'       => $score->getScore(),
+                        'score' => $score->getScore(),
                     ],
                 );
             } catch (\Throwable $e) {
                 $this->logger->error(
                     'ReadinessShield: Error calculating score for objectId={objectId}, profile={profileName}: {error}',
                     [
-                        'objectId'    => $objectId,
+                        'objectId' => $objectId,
                         'profileName' => $profile->getName(),
-                        'error'       => $e->getMessage(),
-                        'exception'   => $e,
+                        'error' => $e->getMessage(),
+                        'exception' => $e,
                     ],
                 );
             }

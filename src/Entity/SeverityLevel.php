@@ -14,16 +14,16 @@ namespace CauhanMukesh\PimcoreMarketReadinessShieldBundle\Entity;
  */
 enum SeverityLevel: string
 {
-    case ERROR   = 'error';
+    case ERROR = 'error';
     case WARNING = 'warning';
-    case INFO    = 'info';
+    case INFO = 'info';
 
     public function label(): string
     {
         return match ($this) {
-            self::ERROR   => 'Error',
+            self::ERROR => 'Error',
             self::WARNING => 'Warning',
-            self::INFO    => 'Info',
+            self::INFO => 'Info',
         };
     }
 
@@ -33,9 +33,9 @@ enum SeverityLevel: string
     public function colour(): string
     {
         return match ($this) {
-            self::ERROR   => '#ef4444',
+            self::ERROR => '#ef4444',
             self::WARNING => '#f59e0b',
-            self::INFO    => '#3b82f6',
+            self::INFO => '#3b82f6',
         };
     }
 }

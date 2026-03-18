@@ -41,7 +41,7 @@ final class ObjectUpdateSubscriber implements EventSubscriberInterface
 
         $objectId = $object->getId();
 
-        if ($objectId === null) {
+        if (null === $objectId) {
             return;
         }
 
