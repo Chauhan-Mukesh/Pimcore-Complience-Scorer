@@ -137,11 +137,17 @@ final class ReadinessScoreCalculatorTest extends TestCase
      */
     private function makeMockObject(int $id, array $fields): \Pimcore\Model\DataObject\Concrete
     {
-        $mock = $this->getMockBuilder(\Pimcore\Model\DataObject\Concrete::class)
+        $extraMethods = array_map(static fn (string $key) => 'get' . ucfirst($key), array_keys($fields));
+
+        $builder = $this->getMockBuilder(\Pimcore\Model\DataObject\Concrete::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['getId', 'getClassName'])
-            ->addMethods(array_map(static fn (string $key) => 'get' . ucfirst($key), array_keys($fields)))
-            ->getMock();
+            ->onlyMethods(['getId', 'getClassName']);
+
+        if ($extraMethods !== []) {
+            $builder = $builder->addMethods($extraMethods);
+        }
+
+        $mock = $builder->getMock();
 
         $mock->method('getId')->willReturn($id);
         $mock->method('getClassName')->willReturn('Product');
